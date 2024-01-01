@@ -2,13 +2,19 @@
 
 ## Description
 
-**NOW WITH DRAG AND DROP**
+This is an implementation example of DiTMoS(server side). DiTMoS is a framework to utilize a set of tiny models to boost the accuracy on time-series mobile applications under comparable memory and latency constraints. 
 
-<p align="center">
-<img src="https://media.giphy.com/media/7OWdOQupgCClrZb19P/giphy.gif" width="80%"></p>
+**Our paper has been submitted to [PerCom'2024](https://www.percom.org/)** .
 
-Solitaire implemented by scratch on vue.js. It contains 3 types of solitaire namely spider(which was made famous by microsoft back when I was a kid) ,spider 4 suit and klondike. I've learned web development myself without any course or coaching so don't expect too much from the source code xD.
+## Requirements
 
-**This project is inspired by [AadumKhor](https://github.com/AadumKhor) Go check out his flutter implementation of the same [Here](https://github.com/AadumKhor/Solitaire_Flutter)** .
+The DiTMoS code is realized by PyTorch 3.10.11.
+You need to install SciPy, scikit-learn library.
 
-## How to play
+## How to Run DiTMoS
+
+The code is an full example of DiTMoS implementation on UniMiB-SHAR dataset which has 17 classes for human activity recognition. The dataset can be found in datasets folder. SInce the UniMiB-SHAR dataset is collected by Matlab, we provide a pre-processing module to convert the Matlab version to python version and split the full dataset to training and test sets as 80%:20%.
+
+1. Run UniMiB-preprocessing.py from pre-processing folder to create training and testing datasets.
+
+Then we can 
