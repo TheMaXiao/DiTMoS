@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import Dataset
+
 def feature_dataset_for_clustering(dataset, large_model, device = 'cpu'):
     large_model.eval()
     feature = []

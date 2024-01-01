@@ -37,11 +37,9 @@ class NeuralNetwork(nn.Module):
             nn.Linear(in_features=fc, out_features=output_size))
         self.dropout = nn.Dropout(0.2)
     def forward(self, x):
-        # out = self.batch_norm(x)
         out = self.features(x)
         out = out.reshape(out.size(0), -1)  
-        out = self.dropout(out)
-        # print(out.shape)     
+        out = self.dropout(out)   
         out = self.fc1(out)
         out = self.dropout(out)
         out = self.fc2(out)
@@ -116,7 +114,6 @@ class Tiny_NeuralNetwork_Classifier(nn.Module):
             nn.Linear(in_features=fc, out_features=output_size))
         self.dropout = nn.Dropout(0.2)
     def forward(self, x, gate_feature):
-        # out = self.batch_norm(x)
         layer1 = self.layer_1(x)
         layer2 = self.layer_2(torch.cat((layer1 , gate_feature[0]), 1))
         layer3 = self.layer_3(torch.cat((layer2 , gate_feature[1]), 1))

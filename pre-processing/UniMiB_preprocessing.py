@@ -23,7 +23,7 @@ x_train, x_test, y_train, y_test = [], [], [], []
 for i in range(1, categories+1):
     cur_data = data[label == i]
     cur_label = label[label == i]
-    cur_x_train, cur_x_test, cur_y_train, cur_y_test = train_test_split(cur_data, cur_label, test_size=0.2, shuffle=True)
+    cur_x_train, cur_x_test, cur_y_train, cur_y_test = train_test_split(cur_data, cur_label, test_size=0.2, shuffle=True) #split the dataset into training and test sets at 8:2.
     x_train += cur_x_train.tolist()
     x_test += cur_x_test.tolist()
     y_train += cur_y_train.tolist()

@@ -2,7 +2,6 @@ from model import NeuralNetwork, Tiny_NeuralNetwork_Classifier, Tiny_NeuralNetwo
 from DiTMoS.clustering import feature_dataset_for_clustering, cluster_dataset_for_classifier
 from DiTMoS.adversarial_training import selector_train, classifier_pretrain, DiTMoS_training_framework, train_classifier_from_selector
 from DiTMoS.test import test_classifier, test_ditmos, test_union_accuracy
-# from DiTMoS.adversarial_training import 
 import torch
 from torch import nn
 import warnings
@@ -211,4 +210,4 @@ for p in range(adversarial_iterations):
         test_acc_list.append(test_correct)
     test_union_accuracy(test_loader, classifiers, selector, device)
 
-print(f'The accuracy of DiTMoS on UniMiB dataset is {max(test_acc_list):>0.1f}%.')
+print(f'The accuracy of DiTMoS on UniMiB dataset is {100*max(test_acc_list):>0.1f}%.')

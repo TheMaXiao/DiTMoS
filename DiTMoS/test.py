@@ -2,9 +2,6 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 
-
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 def test_classifier(dataloader, classifier, selector, loss_fn, device):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
