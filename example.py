@@ -18,13 +18,23 @@ import random
 from sklearn.cluster import KMeans
 
 #set the hyperparameters number of classifiers
-num_classifiers = 8
-adversarial_epochs = 30
-pretrain_classifiers_epochs = 30
-pretrain_selector_epochs = 20
-selector_step_epoch = 6
-classifier_step_epoch = 6
+num_classifiers = 6
+
+strong_model_batch_size = 8 #pretrain strong model batch size
+adversarial_batch_size = 8 #adversarial training batch size
+
+pretrain_classifiers_epochs = 30 #pre-train classifier on subsets
+pretrain_selector_epochs = 20 #pre-train selector from pretrained classifiers
+
+adversarial_iterations = 30 #The number of adversarial training iterations. Each iteration consists of a classifier training step and a selector training step. 
+
+selector_step_epoch = 6 #the number of epochs in the selector training step.
+classifier_step_epoch = 6 #the number of epochs in the classifier training step.
+
+#In the loss parameters, there are 4 factors in the equation 2 in the paper.
+#1. Union loss, 2. Overlap loss, 3. Single loss 4. Selection loss.
 loss_parameter = [0.1,0.03,0.1,1]
+
 #activate cuda or cpu
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -41,8 +51,7 @@ torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 
 #load dataset and create dataloader
-strong_model_batch_size = 8
-adversarial_batch_size = 8
+
 train_x = torch.from_numpy(np.load('datasets/UniMiB-SHAR/x_train.npy')).float()
 train_y = torch.from_numpy(np.load('datasets/UniMiB-SHAR/y_train.npy')).long()
 test_x  = torch.from_numpy(np.load('datasets/UniMiB-SHAR/x_test.npy')).float()
@@ -173,11 +182,11 @@ test_acc_list = [0]
 classifier_optimizer = []
 for i in range(num_classifiers):
     classifier_optimizer.append(torch.optim.SGD(classifiers[i].parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4, nesterov=True))
-for p in range(adversarial_epochs):
+for p in range(adversarial_iterations):
     print(f"Adversarial iteration {p+1} start\n-------------------------------")
     for t in range(selector_step_epoch):
     #gate_train
-        print(f"iteration: {p}, gate epoch: {t}")
+        print(f"iteration: {p+1}, gate epoch: {t+1}")
         selector_learning_rate = 0.001 * (0.5 ** ( (selector_step_epoch *p+t) // 30))
         selector_optimizer = torch.optim.SGD(selector.parameters(), lr=selector_learning_rate, momentum=0.9, weight_decay=1e-4, nesterov=True)
         train_ce_loss, train_correct = selector_train(train_loader, selector, classifiers, selector_optimizer,device)
@@ -189,13 +198,13 @@ for p in range(adversarial_epochs):
     
     for t in range(classifier_step_epoch):
         classifier_learning_rate = 0.001 * (0.5 ** ((classifier_step_epoch*p+t) // 30))
-        print(f"classifier training epoch: {p}, {t}")
+        print(f"classifier training iteration {p+1} epoch {t+1}: ")
         for i in range(num_classifiers):
             classifier_optimizer[i] = torch.optim.SGD(classifiers[i].parameters(), lr=classifier_learning_rate, momentum=0.9, weight_decay=1e-4, nesterov=True)
         train_weight_loss, train_correct = train_classifier_from_selector(train_loader_adv, selector, model, classifier_optimizer, loss_weights = loss_parameter,device = device)
         
         test_correct = test_ditmos(test_loader_adv, selector, classifiers,device)
-        print(f"iteration :{p}, classifier epoch: {t} done!")
+        print(f"iteration :{p+1}, classifier epoch: {t+1} done!")
         if test_correct >= max(test_acc_list):
             torch.save(selector, './saved_model/ditmos_selector_nclassifier_'+str(num_classifiers)+'.pth')
             torch.save(classifiers, './saved_model/ditmos_classifiers_nclassifier_'+str(num_classifiers)+'.pth')
