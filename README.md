@@ -15,7 +15,7 @@ The DiTMoS code is implemented by:
 
 ## How to Run DiTMoS
 
-The code is a full example of DiTMoS implementation on the UniMiB-SHAR dataset which has 17 classes for human activity recognition. The dataset can be found in the datasets folder. Since the UniMiB-SHAR dataset is originally processed by Matlab, we provide a pre-processing module to convert the Matlab version to python version and split the full dataset to training and test sets at 80%:20%.
+The code is a full example of DiTMoS implementation on the [UniMiB-SHAR dataset](https://www.sal.disco.unimib.it/technologies/unimib-shar/) which has 17 classes for human activity recognition. The dataset can be found in the datasets folder. Since the UniMiB-SHAR dataset is originally processed by Matlab, we provide a pre-processing module to convert the Matlab version to python version and split the full dataset to training and test sets at 80%:20%.
 
 1. Run **UniMiB-preprocessing.py** from **pre-processing folder** to create training and testing datasets.
 2. Run the **example.py** to implement DiTMoS on the sever and report the final accuracy.
