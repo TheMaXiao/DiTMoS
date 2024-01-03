@@ -29,7 +29,7 @@ train_set = data.TensorDataset(train_x, train_y)
 test_set = data.TensorDataset(test_x, test_y)
 test_loader_adv = data.DataLoader(dataset=test_set, batch_size=test_batch_size, shuffle=True)
 # load models from saved_model folder.
-classifiers = nn.ModuleList([Tiny_NeuralNetwork_Classifier(output_size=num_classes, conv = [8,8,4], fc = 52) for i in range(num_classifiers)]).to(device)
+classifiers = nn.ModuleList([Tiny_NeuralNetwork_Classifier(output_size=num_classes, conv = [8,8,4], fc = 64) for i in range(num_classifiers)]).to(device)
 selector = Tiny_NeuralNetwork_Selector(output_size=num_classifiers, conv = [8,8,4], fc = 64).to(device)
 classifiers = torch.load("./saved_model/ditmos_classifiers_nclassifier_6.pth")
 selector = torch.load("./saved_model/ditmos_selector_nclassifier_6.pth")

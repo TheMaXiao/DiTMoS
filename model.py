@@ -8,38 +8,40 @@ class NeuralNetwork(nn.Module):
         self.batch_norm = nn.BatchNorm1d(num_features=3)
         self.features = nn.Sequential(
             nn.BatchNorm1d(3),
-            nn.Conv1d(in_channels=3, out_channels=conv[0], kernel_size=15, padding = 'same'),
+            nn.Conv1d(in_channels=3, out_channels=conv[0], kernel_size=15, padding = 1),
             nn.BatchNorm1d(conv[0]),
             nn.ReLU(),
-            nn.Conv1d(in_channels=conv[0], out_channels=conv[1], kernel_size=13, padding = 'same'),
+            nn.Conv1d(in_channels=conv[0], out_channels=conv[1], kernel_size=13, padding = 1),
             nn.BatchNorm1d(conv[1]),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2, stride=2), 
-            nn.Conv1d(in_channels=conv[1], out_channels=conv[2], kernel_size=9, padding = 'same'),
+            nn.Conv1d(in_channels=conv[1], out_channels=conv[2], kernel_size=9, padding = 1),
             nn.BatchNorm1d(conv[2]),
             nn.ReLU(),
-            nn.Conv1d(in_channels=conv[2], out_channels=conv[3], kernel_size=9, padding = 'same'),
+            nn.Conv1d(in_channels=conv[2], out_channels=conv[3], kernel_size=9, padding = 1),
             nn.BatchNorm1d(conv[3]),
             nn.ReLU(),            
             nn.MaxPool1d(kernel_size=2, stride=2),
-            nn.Conv1d(in_channels=conv[3], out_channels=conv[4], kernel_size=5, padding = 'same'),
+            nn.Conv1d(in_channels=conv[3], out_channels=conv[4], kernel_size=5, padding = 1),
             nn.BatchNorm1d(conv[4]),
             nn.ReLU(),            
-            nn.Conv1d(in_channels=conv[4], out_channels=conv[5], kernel_size=5, padding = 'same'),
+            nn.Conv1d(in_channels=conv[4], out_channels=conv[5], kernel_size=5, padding = 1),
             nn.BatchNorm1d(conv[5]),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2, stride=2),
         )  
         self.fc1 = nn.Sequential(
-            nn.Linear(in_features=conv[5]*18, out_features=fc),
+            nn.Linear(in_features=conv[5]*11, out_features=fc),
             nn.ReLU())        
         self.fc2 = nn.Sequential(
             nn.Linear(in_features=fc, out_features=output_size))
         self.dropout = nn.Dropout(0.2)
     def forward(self, x):
+        # out = self.batch_norm(x)
         out = self.features(x)
         out = out.reshape(out.size(0), -1)  
-        out = self.dropout(out)   
+        out = self.dropout(out)
+        # print(out.shape)     
         out = self.fc1(out)
         out = self.dropout(out)
         out = self.fc2(out)

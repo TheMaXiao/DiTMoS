@@ -25,7 +25,7 @@ adversarial_batch_size = 8 #adversarial training batch size
 pretrain_classifiers_epochs = 30 #pre-train classifier on subsets
 pretrain_selector_epochs = 20 #pre-train selector from pretrained classifiers
 
-adversarial_iterations = 30 #The number of adversarial training iterations. Each iteration consists of a classifier training step and a selector training step. 
+adversarial_iterations = 40 #The number of adversarial training iterations. Each iteration consists of a classifier training step and a selector training step. 
 
 selector_step_epoch = 6 #the number of epochs in the selector training step.
 classifier_step_epoch = 6 #the number of epochs in the classifier training step.
@@ -38,7 +38,7 @@ loss_parameter = [0.1,0.03,0.1,1]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 #set seed for reproduce
-seed = 0
+seed = 1
 torch.random.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 torch.manual_seed(seed)
@@ -76,11 +76,24 @@ file_path = "./pretrained_model/pretrain_strong_model_UniMiB.pth"
 if os.path.exists(file_path):
     print('Pre-trained model exists!')
     large_model = torch.load("./pretrained_model/pretrain_strong_model_UniMiB.pth") 
+    correct = 0
+    test_loss = 0
+    loss_fn_pretrain = nn.CrossEntropyLoss()
+    with torch.no_grad():
+        for X, y in test_loader:
+            X, y = X.to(device), y.to(device)
+            pred = large_model(X)
+            test_loss += loss_fn_pretrain(pred, y).item()
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    test_loss /= len(test_loader)
+    correct /= len_test
+    accuracy = 100*correct
+    print(f"Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f}")
 else:
     print('No pre-trained model exists! Now train a strong model!')
     #train the strong model from scratch.
-    pretrain_optimizer = torch.optim.SGD(large_model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4, nesterov=True)
-    scheduler = torch.optim.lr_scheduler.StepLR(pretrain_optimizer, 20, gamma=0.2, last_epoch=-1)
+    # pretrain_optimizer = torch.optim.SGD(large_model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4, nesterov=True)
+    # scheduler = torch.optim.lr_scheduler.StepLR(pretrain_optimizer, 20, gamma=0.2, last_epoch=-1)
     loss_fn_pretrain = nn.CrossEntropyLoss()
     epochs = 50
     best_test_acc = 0
@@ -89,6 +102,8 @@ else:
         train_loss = 0
         correct = 0
         test_loss = 0
+        learning_rate = 0.005 * (0.2 ** (epoch // 20))
+        pretrain_optimizer = torch.optim.SGD(large_model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=1e-4, nesterov=True)
         for batch, (X, y) in enumerate(train_loader):
             X, y = X.to(device), y.to(device)
             #computing prediction error
@@ -101,10 +116,9 @@ else:
             pretrain_optimizer.zero_grad()
             loss.backward()
             pretrain_optimizer.step()
-        scheduler.step()
         correct /= len_train
         accuracy = 100*correct
-        print(f"Test Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f}")
+        print(f"Train Error: \n Accuracy: {(accuracy):>0.1f}%, Avg loss: {test_loss:>8f}")
         with torch.no_grad():
             for X, y in test_loader:
                 X, y = X.to(device), y.to(device)
@@ -147,7 +161,7 @@ for i in range(num_classifiers):
     test_classifier_loader.append(torch.utils.data.DataLoader(test_classifier_set[i], batch_size = 8, shuffle=False))
 
 # define classifiers and selector
-classifiers = nn.ModuleList([Tiny_NeuralNetwork_Classifier(output_size=num_classes, conv = [8,8,4], fc = 52) for i in range(num_classifiers)]).to(device)
+classifiers = nn.ModuleList([Tiny_NeuralNetwork_Classifier(output_size=num_classes, conv = [8,8,4], fc = 64) for i in range(num_classifiers)]).to(device)
 selector = Tiny_NeuralNetwork_Selector(output_size=num_classifiers, conv = [8,8,4], fc = 64).to(device)
 
 # classifiers pre-train
@@ -167,7 +181,7 @@ for i in range(len(classifiers)):
 # Selector pretrain
 for t in range(pretrain_selector_epochs):
     print(f"Epoch {t+1}\n-------------------------------")
-    selector_learning_rate = 0.001 * (0.5 ** (t // 8))
+    selector_learning_rate = 0.01 * (0.5 ** (t // 8))
     selector_optimizer = torch.optim.SGD(selector.parameters(), lr=selector_learning_rate, momentum=0.9, weight_decay=1e-4, nesterov=True)
     train_ce_loss, train_correct = selector_train(train_loader, selector, classifiers, selector_optimizer,device)
     test_correct = test_ditmos(test_loader, selector, classifiers, device)

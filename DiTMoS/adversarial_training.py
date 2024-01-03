@@ -70,8 +70,8 @@ class DiTMoS_training_framework(nn.Module):
             selector_pred, selector_feature = self.selector(x)
             softmax_template = [self.classifiers[i](x, selector_feature) for i in range(self.num_classifiers)]
         classifier_outputs = [self.classifiers[i](x, selector_feature) for i in range(self.num_classifiers)]
-        union_loss, overlap_loss, single_loss = self.intersection_union_loss(classifier_outputs, y, softmax_template)
-        return classifier_outputs, union_loss, overlap_loss, single_loss
+        wrong_loss, multi_correct_loss, one_correct_loss = self.intersection_union_loss(classifier_outputs, y, softmax_template)
+        return classifier_outputs, wrong_loss, multi_correct_loss, one_correct_loss
 
 
 

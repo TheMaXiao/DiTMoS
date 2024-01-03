@@ -31,7 +31,7 @@ There are four steps to implement DiTMoS framework.
 3. Train the classifiers and selector by an **adversarial training** manner. The classifiers and selector will be trained **iteratively**. 
 4. Execute inference to test the **performance** of DiTMoS and save the models to **saved_model** folder. 
 
-We implement the **clustering, adversarial training, and testing** components in the **DiTMoS folder**. The architectures of the strong model, the selector and classifiers are defined in **model.py** file. The strong model is a **6-layer CNN** while the selector and classifier are both **3-layer CNN** including feature aggregation module. Compared to the best baseline(79%), the default example DiTMoS can achieve **86%** on accuracy. Users can modify the code for their own applications.
+We implement the **clustering, adversarial training, and testing** components in the **DiTMoS folder**. The architectures of the strong model, the selector and classifiers are defined in **model.py** file. The strong model is a **6-layer CNN** while the selector and classifier are both **3-layer CNN** including feature aggregation module. Compared to the best baseline(79%), the default example DiTMoS can achieve more than **86%** on accuracy. Users can modify the code for their own applications.
 
 ## Hardware Inplementation
 
