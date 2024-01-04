@@ -25,7 +25,7 @@ adversarial_batch_size = 8 #adversarial training batch size
 pretrain_classifiers_epochs = 30 #pre-train classifier on subsets
 pretrain_selector_epochs = 20 #pre-train selector from pretrained classifiers
 
-adversarial_iterations = 30 #The number of adversarial training iterations. Each iteration consists of a classifier training step and a selector training step. 
+adversarial_iterations = 40 #The number of adversarial training iterations. Each iteration consists of a classifier training step and a selector training step. 
 
 selector_step_epoch = 6 #the number of epochs in the selector training step.
 classifier_step_epoch = 6 #the number of epochs in the classifier training step.
@@ -36,7 +36,7 @@ loss_parameter = [0.1,0.03,0.1,1]
 
 #activate cuda or cpu
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+print('The model is running on {device}.')
 #set seed for reproduce
 seed = 0
 torch.random.manual_seed(seed)
