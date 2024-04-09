@@ -4,7 +4,7 @@
 
 This is an implementation example of DiTMoS(server side). DiTMoS is a framework to utilize a set of tiny models to boost the accuracy using model selection on time-series mobile applications under comparable memory and latency constraints. 
 
-**Our paper has been accepted to [PerCom'2024](https://www.percom.org/)** .
+**Our paper won the Mark Weiser Best Paper Award on [PerCom'2024](https://www.percom.org/)** .
 
 ## Requirements
 
